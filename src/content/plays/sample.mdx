@@ -6,11 +6,11 @@ steps:
   - label: "Initial spacing"
     durationMs: 900
     players:
-      - { id: "1", role: "PG", x: 10, y: 80 }
-      - { id: "2", role: "SG", x: 25, y: 30 }
-      - { id: "3", role: "SF", x: 70, y: 25 }
-      - { id: "4", role: "PF", x: 60, y: 75 }
-      - { id: "5", role: "C",  x: 80, y: 80 }
+      - { id: "1", role: "1", x: 10, y: 80 }
+      - { id: "2", role: "2", x: 25, y: 30 }
+      - { id: "3", role: "3", x: 70, y: 25 }
+      - { id: "4", role: "4", x: 60, y: 75 }
+      - { id: "5", role: "5",  x: 80, y: 80 }
     passes: []
     screens: []
   - label: "Drag action"
@@ -38,5 +38,5 @@ steps:
 ---
 
 # Sample Play
-<PlayAnimator play={frontmatter} />
+<PlayAnimator play={frontmatter} client:load />
 {frontmatter.video && <VideoPlayer src={frontmatter.video} />}
