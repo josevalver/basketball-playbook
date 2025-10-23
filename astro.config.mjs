@@ -8,4 +8,4 @@ integrations: [mdx(), tailwind({ applyBaseStyles: true })],
 output: 'static',
 site: 'https://josevalver.github.io/basketball-playbook',
 markdown: { shikiConfig: { theme: 'one-dark-pro' } },
-})
+})//
