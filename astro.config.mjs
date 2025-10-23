@@ -2,10 +2,9 @@ import { defineConfig } from 'astro/config'
 import mdx from '@astrojs/mdx'
 import tailwind from '@astrojs/tailwind'
 
-
 export default defineConfig({
-integrations: [mdx(), tailwind({ applyBaseStyles: true })],
-output: 'static',
-site: 'https://josevalver.github.io/basketball-playbook',
-markdown: { shikiConfig: { theme: 'one-dark-pro' } },
-})//
+  site: 'https://josevalver.github.io',
+  base: '/basketball-playbook/',   // remove this line if deploying to <user>.github.io root
+  output: 'static',
+  integrations: [mdx(), tailwind({ applyBaseStyles: true })],
+})

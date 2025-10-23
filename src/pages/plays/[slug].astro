@@ -1,17 +1,23 @@
 ---
+// src/pages/plays/[slug].astro
 import Base from "../../layouts/Base.astro";
-import { getCollection } from 'astro:content'
-import * as components from '../../components/index.js'
+import { getCollection } from "astro:content";
+import * as components from "../../components/index.js";
 
+export const getStaticPaths = async () => {
+  const plays = await getCollection("plays");
+  return plays.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+};
 
-const { slug } = Astro.params
-const entries = await getCollection('plays')
-const entry = entries.find(e => e.slug === slug)
-if (!entry) throw new Error('Play not found')
-const { Content, frontmatter } = await entry.render()
+const { entry } = Astro.props;
+const { Content, frontmatter } = await entry.render();
 ---
+
 <Base title={frontmatter.title}>
-<article class="prose prose-invert max-w-none">
-<Content components={components} />
-</article>
+  <article class="prose prose-invert max-w-none">
+    <Content components={components} />
+  </article>
 </Base>
