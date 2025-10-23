@@ -1,22 +1,32 @@
 ---
 // src/pages/plays/[slug].astro
 import Base from "../../layouts/Base.astro";
-import { getCollection } from "astro:content";
+import { getCollection, getEntryBySlug } from "astro:content";
 import * as components from "../../components/index.js";
 
 export const getStaticPaths = async () => {
   const plays = await getCollection("plays");
-  return plays.map((entry) => ({
+  // Only generate pages for entries that have a title (defensive)
+  return plays.map((entry: { slug: any; }) => ({
     params: { slug: entry.slug },
-    props: { entry },
+    props: { slug: entry.slug },
   }));
 };
 
-const { entry } = Astro.props;
+const { slug } = Astro.props;
+
+// Load the entry by slug; this guarantees we can refetch even if props change shape
+const entry = await getEntryBySlug("plays", slug);
+if (!entry) {
+  throw new Error(`Play not found for slug: ${slug}`);
+}
+
 const { Content, frontmatter } = await entry.render();
+// Fall back to entry.data.title or the slug if frontmatter is missing
+const pageTitle = frontmatter?.title ?? entry.data?.title ?? slug;
 ---
 
-<Base title={frontmatter.title}>
+<Base title={pageTitle}>
   <article class="prose prose-invert max-w-none">
     <Content components={components} />
   </article>
