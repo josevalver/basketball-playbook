@@ -1,16 +1,18 @@
 ---
-
+import Base from "../layouts/Base.astro";
+import { getCollection } from 'astro:content'
+const plays = await getCollection('plays')
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Playbook">
+<h1 class="text-3xl font-bold mb-6">Playbook</h1>
+<ul class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+{plays.map(p => (
+<li class="rounded-xl bg-zinc-900/40 p-4 ring-1 ring-white/10 hover:ring-emerald-400/40 transition">
+<a href={`/plays/${p.slug}/`} class="block">
+<h3 class="font-semibold">{p.data.title}</h3>
+<p class="text-sm text-zinc-400">{p.data.tags.join(', ')}</p>
+</a>
+</li>
+))}
+</ul>
+</Base>
