@@ -2,19 +2,79 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Court = ({ children }) => (
-  <svg viewBox="0 0 100 94" className="w-full rounded-2xl shadow ring-1 ring-white/10 bg-emerald-900/10">
-    <rect x="0" y="0" width="100" height="94" rx="2" fill="url(#g)" />
-    <defs>
-      <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopOpacity="0.1" />
-        <stop offset="100%" stopOpacity="0.2" />
-      </linearGradient>
-    </defs>
-    <line x1="0" y1="70" x2="100" y2="70" stroke="currentColor" strokeOpacity="0.2" />
-    {children}
-  </svg>
-);
+const Court = ({ children }) => {
+
+    const W = 100, H = 94;
+  const baseline = H;
+  const centerX = W / 2;
+
+  const backboardY = baseline - 8;       
+  const rimY       = backboardY - 3;     
+  const rimR       = 1.4;               
+  const laneFullW  = 0.32 * W;           
+  const laneX1     = centerX - laneFullW/2;
+  const laneX2     = centerX + laneFullW/2;
+  const ftLineY    = baseline - 38;      
+  const ftRad      = 12;                 
+  const restrRad   = 8;                  
+
+  const r3 = 44.3;
+  const sideX1 = 8, sideX2 = W - 8;
+  const dx = Math.abs(centerX - sideX1);
+  const dy = Math.sqrt(Math.max(r3*r3 - dx*dx, 0));
+  const threeY = rimY - dy; 
+
+  const arc = (cx, cy, R, fromAngleDeg, toAngleDeg) => {
+    const toXY = (deg) => {
+      const rad = (deg * Math.PI) / 180;
+      return [cx + R * Math.cos(rad), cy + R * Math.sin(rad)];
+    };
+    const [x1, y1] = toXY(fromAngleDeg);
+    const [x2, y2] = toXY(toAngleDeg);
+    const largeArc = Math.abs(toAngleDeg - fromAngleDeg) > 180 ? 1 : 0;
+    const sweep = toAngleDeg > fromAngleDeg ? 1 : 0;
+    return `M ${x1} ${y1} A ${R} ${R} 0 ${largeArc} ${sweep} ${x2} ${y2}`;
+  };
+
+  const ftArcPath = arc(centerX, ftLineY, ftRad, 200, -20);
+  const restrArcPath = arc(centerX, rimY, restrRad, 200, -20);
+  const startAngle = Math.atan2(threeY - rimY, sideX1 - centerX) * 180/Math.PI;
+  const endAngle   = Math.atan2(threeY - rimY, sideX2 - centerX) * 180/Math.PI;
+  const arc3ptPath = arc(centerX, rimY, r3, startAngle, endAngle);
+
+  return (
+    <svg viewBox="0 0 100 94" className="w-full rounded-2xl shadow ring-1 ring-white/10 bg-emerald-900/5">
+      {/* Outer bounds (half court area) */}
+      <rect x="0" y="0" width={W} height={H} fill="none" className="stroke-white/20" />
+
+      {/* Lane / Paint */}
+      <rect x={laneX1} y={ftLineY} width={laneFullW} height={baseline - ftLineY} fill="none" className="stroke-white/35" />
+      {/* Free-throw line */}
+      <line x1={laneX1} y1={ftLineY} x2={laneX2} y2={ftLineY} className="stroke-white/35" />
+      {/* Free-throw semicircle (top) */}
+      <path d={ftArcPath} className="fill-none stroke-white/30" />
+
+      {/* Backboard & Rim */}
+      <line x1={centerX - 5} y1={backboardY} x2={centerX + 5} y2={backboardY} className="stroke-white/70" />
+      <circle cx={centerX} cy={rimY} r={rimR} className="fill-none stroke-amber-300/90" />
+
+      {/* Restricted area */}
+      <path d={restrArcPath} className="fill-none stroke-white/40" />
+
+      {/* Corner threes (straight lines up to arc intersection) */}
+      <line x1={sideX1} y1={baseline} x2={sideX1} y2={threeY} className="stroke-white/35" />
+      <line x1={sideX2} y1={baseline} x2={sideX2} y2={threeY} className="stroke-white/35" />
+      {/* 3pt arc */}
+      <path d={arc3ptPath} className="fill-none stroke-white/35" />
+
+      {/* Half-court line for context (optional) */}
+      <line x1="0" y1={H/2} x2={W} y2={H/2} className="stroke-white/10" />
+
+      {children}
+    </svg>
+  );
+};
+
 
 const Dot = ({ id, role, active }) => (
   <g>
