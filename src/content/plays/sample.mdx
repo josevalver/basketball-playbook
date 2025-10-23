@@ -1,5 +1,3 @@
-import { PlayAnimator, VideoPlayer } from '../../components/index.js'
-
 ---
 title: "Sample Play"
 tags: ["transition", "handoff"]
@@ -38,6 +36,8 @@ steps:
     screens:
       - ["5", "2"]
 ---
+
+import { PlayAnimator, VideoPlayer } from '../../components/index.js'
 
 # Sample Play
 <PlayAnimator play={frontmatter} client:load />
